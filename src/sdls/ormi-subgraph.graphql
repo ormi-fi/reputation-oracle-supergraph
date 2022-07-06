@@ -1,0 +1,64 @@
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON
+
+type Proof {
+  jws: String
+  type: String
+  created: String
+  proofPurpose: String
+  verificationMethod: String
+}
+
+type CredentialSubject {
+  id: String
+  hash: String
+  address: String
+  provider: String
+  challenge: String
+}
+
+type VerifiedCredential {
+  type: [String]!
+  credentialSubject: CredentialSubject!
+  issuer: String!
+  issuanceDate: String!
+  expirationDate: String!
+  proof: Proof!
+}
+
+type Stamp {
+  provider: String
+  credential: VerifiedCredential
+}
+
+type GitcoinPassport {
+  issuanceDate: String!
+  expiryDate: String!
+  stamps: [Stamp]
+}
+
+type Erc20BalanceResponse {
+  symbol: String
+  name: String
+  balance: Float
+  price: Float
+  value: Float
+  token_address: String
+  logo: String
+}
+
+type AccountActivitiesResponse {
+  transactionsPerMonth: Float!
+  activeBuyerSeller: Boolean!
+  monthsSinceFirstTransaction: Int!
+  existedLongEnough: Boolean!
+  userIsActive: Boolean!
+}
+
+type Query {
+  accountActivities(address: String!, chain: String!): AccountActivitiesResponse
+  erc20Balances(address: String!, chain: String!): [Erc20BalanceResponse]
+  gitcoinPassport(address: String!): GitcoinPassport
+}

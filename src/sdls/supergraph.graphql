@@ -1,0 +1,2169 @@
+
+schema
+  @link(url: "https://specs.apollo.dev/link/v1.0")
+  @link(url: "https://specs.apollo.dev/join/v0.2", for: EXECUTION)
+{
+  query: Query
+  mutation: Mutation
+}
+
+directive @join__field(graph: join__Graph!, requires: join__FieldSet, provides: join__FieldSet, type: String, external: Boolean, override: String, usedOverridden: Boolean) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+
+directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+
+directive @join__implements(graph: join__Graph!, interface: String!) repeatable on OBJECT | INTERFACE
+
+directive @join__type(graph: join__Graph!, key: join__FieldSet, extension: Boolean! = false, resolvable: Boolean! = true) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+
+directive @link(url: String, as: String, for: link__Purpose, import: [link__Import]) repeatable on SCHEMA
+
+input AchRequest
+  @join__type(graph: ORMI)
+{
+  secret: String!
+  ethereumAddress: EthereumAddress!
+  handle: CreateHandle
+  freeTextHandle: Boolean
+  overrideTradeMark: Boolean!
+}
+
+type ApprovedAllowanceAmount
+  @join__type(graph: ORMI)
+{
+  currency: ContractAddress!
+  module: String!
+  contractAddress: ContractAddress!
+  allowance: String!
+}
+
+input ApprovedModuleAllowanceAmountRequest
+  @join__type(graph: ORMI)
+{
+  currencies: [ContractAddress!]!
+  collectModules: [CollectModules!]!
+  followModules: [FollowModules!]!
+  referenceModules: [ReferenceModules!]!
+}
+
+type Attribute
+  @join__type(graph: ORMI)
+{
+  displayType: MetadataDisplayType
+  traitType: String
+  key: String!
+  value: String!
+}
+
+type AuthChallengeResult
+  @join__type(graph: ORMI)
+{
+  text: String!
+}
+
+type AuthenticationResult
+  @join__type(graph: ORMI)
+{
+  accessToken: Jwt!
+  refreshToken: Jwt!
+}
+
+scalar BlockchainData
+  @join__type(graph: ORMI)
+
+scalar BroadcastId
+  @join__type(graph: ORMI)
+
+input BroadcastRequest
+  @join__type(graph: ORMI)
+{
+  id: BroadcastId!
+  signature: Signature!
+}
+
+input BurnProfileRequest
+  @join__type(graph: ORMI)
+{
+  profileId: ProfileId!
+}
+
+scalar ChainId
+  @join__type(graph: ORMI)
+
+input ChallengeRequest
+  @join__type(graph: ORMI)
+{
+  address: EthereumAddress!
+}
+
+type ClaimableHandles
+  @join__type(graph: ORMI)
+{
+  reservedHandles: [ReservedClaimableHandle!]!
+  canClaimFreeTextHandle: Boolean!
+}
+
+input ClaimHandleRequest
+  @join__type(graph: ORMI)
+{
+  id: HandleClaimIdScalar
+  freeTextHandle: CreateHandle
+  followModule: FollowModuleParams
+}
+
+union CollectModule
+  @join__type(graph: ORMI)
+ = FreeCollectModuleSettings | FeeCollectModuleSettings | LimitedFeeCollectModuleSettings | LimitedTimedFeeCollectModuleSettings | RevertCollectModuleSettings | TimedFeeCollectModuleSettings
+
+scalar CollectModuleData
+  @join__type(graph: ORMI)
+
+input CollectModuleParams
+  @join__type(graph: ORMI)
+{
+  freeCollectModule: FreeCollectModuleParams
+  revertCollectModule: Boolean
+  feeCollectModule: FeeCollectModuleParams
+  limitedFeeCollectModule: LimitedFeeCollectModuleParams
+  limitedTimedFeeCollectModule: LimitedTimedFeeCollectModuleParams
+  timedFeeCollectModule: TimedFeeCollectModuleParams
+}
+
+enum CollectModules
+  @join__type(graph: ORMI)
+{
+  LimitedFeeCollectModule
+  FeeCollectModule
+  LimitedTimedFeeCollectModule
+  TimedFeeCollectModule
+  RevertCollectModule
+  FreeCollectModule
+}
+
+type Comment
+  @join__type(graph: ORMI)
+{
+  id: InternalPublicationId!
+  profile: Profile!
+  stats: PublicationStats!
+  metadata: MetadataOutput!
+  onChainContentURI: String!
+  createdAt: DateTime!
+  collectModule: CollectModule!
+  referenceModule: ReferenceModule
+  appId: Sources
+  hidden: Boolean!
+  collectNftAddress: ContractAddress
+  mainPost: MainPostReference!
+  commentOn: Publication
+  firstComment: Comment
+  collectedBy: Wallet
+  reaction(request: ReactionFieldResolverRequest): ReactionTypes
+  hasCollectedByMe: Boolean!
+  mirrors(by: ProfileId): [InternalPublicationId!]!
+}
+
+scalar ContractAddress
+  @join__type(graph: ORMI)
+
+type CreateBurnEIP712TypedData
+  @join__type(graph: ORMI)
+{
+  types: CreateBurnEIP712TypedDataTypes!
+  domain: EIP712TypedDataDomain!
+  value: CreateBurnEIP712TypedDataValue!
+}
+
+type CreateBurnEIP712TypedDataTypes
+  @join__type(graph: ORMI)
+{
+  BurnWithSig: [EIP712TypedDataField!]!
+}
+
+type CreateBurnEIP712TypedDataValue
+  @join__type(graph: ORMI)
+{
+  nonce: Nonce!
+  deadline: UnixTimestamp!
+  tokenId: String!
+}
+
+type CreateBurnProfileBroadcastItemResult
+  @join__type(graph: ORMI)
+{
+  id: BroadcastId!
+  expiresAt: DateTime!
+  typedData: CreateBurnEIP712TypedData!
+}
+
+type CreateCollectBroadcastItemResult
+  @join__type(graph: ORMI)
+{
+  id: BroadcastId!
+  expiresAt: DateTime!
+  typedData: CreateCollectEIP712TypedData!
+}
+
+type CreateCollectEIP712TypedData
+  @join__type(graph: ORMI)
+{
+  types: CreateCollectEIP712TypedDataTypes!
+  domain: EIP712TypedDataDomain!
+  value: CreateCollectEIP712TypedDataValue!
+}
+
+type CreateCollectEIP712TypedDataTypes
+  @join__type(graph: ORMI)
+{
+  CollectWithSig: [EIP712TypedDataField!]!
+}
+
+type CreateCollectEIP712TypedDataValue
+  @join__type(graph: ORMI)
+{
+  nonce: Nonce!
+  deadline: UnixTimestamp!
+  profileId: ProfileId!
+  pubId: PublicationId!
+  data: BlockchainData!
+}
+
+input CreateCollectRequest
+  @join__type(graph: ORMI)
+{
+  publicationId: InternalPublicationId!
+}
+
+type CreateCommentBroadcastItemResult
+  @join__type(graph: ORMI)
+{
+  id: BroadcastId!
+  expiresAt: DateTime!
+  typedData: CreateCommentEIP712TypedData!
+}
+
+type CreateCommentEIP712TypedData
+  @join__type(graph: ORMI)
+{
+  types: CreateCommentEIP712TypedDataTypes!
+  domain: EIP712TypedDataDomain!
+  value: CreateCommentEIP712TypedDataValue!
+}
+
+type CreateCommentEIP712TypedDataTypes
+  @join__type(graph: ORMI)
+{
+  CommentWithSig: [EIP712TypedDataField!]!
+}
+
+type CreateCommentEIP712TypedDataValue
+  @join__type(graph: ORMI)
+{
+  nonce: Nonce!
+  deadline: UnixTimestamp!
+  profileId: ProfileId!
+  contentURI: PublicationUrl!
+  profileIdPointed: ProfileId!
+  pubIdPointed: PublicationId!
+  collectModule: ContractAddress!
+  collectModuleInitData: CollectModuleData!
+  referenceModule: ContractAddress!
+  referenceModuleInitData: ReferenceModuleData!
+  referenceModuleData: ReferenceModuleData!
+}
+
+type CreateFollowBroadcastItemResult
+  @join__type(graph: ORMI)
+{
+  id: BroadcastId!
+  expiresAt: DateTime!
+  typedData: CreateFollowEIP712TypedData!
+}
+
+type CreateFollowEIP712TypedData
+  @join__type(graph: ORMI)
+{
+  types: CreateFollowEIP712TypedDataTypes!
+  domain: EIP712TypedDataDomain!
+  value: CreateFollowEIP712TypedDataValue!
+}
+
+type CreateFollowEIP712TypedDataTypes
+  @join__type(graph: ORMI)
+{
+  FollowWithSig: [EIP712TypedDataField!]!
+}
+
+type CreateFollowEIP712TypedDataValue
+  @join__type(graph: ORMI)
+{
+  nonce: Nonce!
+  deadline: UnixTimestamp!
+  profileIds: [ProfileId!]!
+  datas: [BlockchainData!]!
+}
+
+scalar CreateHandle
+  @join__type(graph: ORMI)
+
+type CreateMirrorBroadcastItemResult
+  @join__type(graph: ORMI)
+{
+  id: BroadcastId!
+  expiresAt: DateTime!
+  typedData: CreateMirrorEIP712TypedData!
+}
+
+type CreateMirrorEIP712TypedData
+  @join__type(graph: ORMI)
+{
+  types: CreateMirrorEIP712TypedDataTypes!
+  domain: EIP712TypedDataDomain!
+  value: CreateMirrorEIP712TypedDataValue!
+}
+
+type CreateMirrorEIP712TypedDataTypes
+  @join__type(graph: ORMI)
+{
+  MirrorWithSig: [EIP712TypedDataField!]!
+}
+
+type CreateMirrorEIP712TypedDataValue
+  @join__type(graph: ORMI)
+{
+  nonce: Nonce!
+  deadline: UnixTimestamp!
+  profileId: ProfileId!
+  profileIdPointed: ProfileId!
+  pubIdPointed: PublicationId!
+  referenceModuleData: ReferenceModuleData!
+  referenceModule: ContractAddress!
+  referenceModuleInitData: ReferenceModuleData!
+}
+
+input CreateMirrorRequest
+  @join__type(graph: ORMI)
+{
+  profileId: ProfileId!
+  publicationId: InternalPublicationId!
+  referenceModule: ReferenceModuleParams
+}
+
+type CreatePostBroadcastItemResult
+  @join__type(graph: ORMI)
+{
+  id: BroadcastId!
+  expiresAt: DateTime!
+  typedData: CreatePostEIP712TypedData!
+}
+
+type CreatePostEIP712TypedData
+  @join__type(graph: ORMI)
+{
+  types: CreatePostEIP712TypedDataTypes!
+  domain: EIP712TypedDataDomain!
+  value: CreatePostEIP712TypedDataValue!
+}
+
+type CreatePostEIP712TypedDataTypes
+  @join__type(graph: ORMI)
+{
+  PostWithSig: [EIP712TypedDataField!]!
+}
+
+type CreatePostEIP712TypedDataValue
+  @join__type(graph: ORMI)
+{
+  nonce: Nonce!
+  deadline: UnixTimestamp!
+  profileId: ProfileId!
+  contentURI: PublicationUrl!
+  collectModule: ContractAddress!
+  collectModuleInitData: CollectModuleData!
+  referenceModule: ContractAddress!
+  referenceModuleInitData: ReferenceModuleData!
+}
+
+input CreateProfileRequest
+  @join__type(graph: ORMI)
+{
+  handle: CreateHandle!
+  profilePictureUri: Url
+  followModule: FollowModuleParams
+  followNFTURI: Url
+}
+
+input CreatePublicCommentRequest
+  @join__type(graph: ORMI)
+{
+  profileId: ProfileId!
+  publicationId: InternalPublicationId!
+  contentURI: Url!
+  collectModule: CollectModuleParams!
+  referenceModule: ReferenceModuleParams
+}
+
+input CreatePublicPostRequest
+  @join__type(graph: ORMI)
+{
+  profileId: ProfileId!
+  contentURI: Url!
+  collectModule: CollectModuleParams!
+  referenceModule: ReferenceModuleParams
+}
+
+input CreatePublicSetProfileMetadataURIRequest
+  @join__type(graph: ORMI)
+{
+  profileId: ProfileId!
+  metadata: Url!
+}
+
+input CreateSetDefaultProfileRequest
+  @join__type(graph: ORMI)
+{
+  profileId: ProfileId!
+}
+
+type CreateSetDispatcherBroadcastItemResult
+  @join__type(graph: ORMI)
+{
+  id: BroadcastId!
+  expiresAt: DateTime!
+  typedData: CreateSetDispatcherEIP712TypedData!
+}
+
+type CreateSetDispatcherEIP712TypedData
+  @join__type(graph: ORMI)
+{
+  types: CreateSetDispatcherEIP712TypedDataTypes!
+  domain: EIP712TypedDataDomain!
+  value: CreateSetDispatcherEIP712TypedDataValue!
+}
+
+type CreateSetDispatcherEIP712TypedDataTypes
+  @join__type(graph: ORMI)
+{
+  SetDispatcherWithSig: [EIP712TypedDataField!]!
+}
+
+type CreateSetDispatcherEIP712TypedDataValue
+  @join__type(graph: ORMI)
+{
+  nonce: Nonce!
+  deadline: UnixTimestamp!
+  profileId: ProfileId!
+  dispatcher: EthereumAddress!
+}
+
+type CreateSetFollowModuleBroadcastItemResult
+  @join__type(graph: ORMI)
+{
+  id: BroadcastId!
+  expiresAt: DateTime!
+  typedData: CreateSetFollowModuleEIP712TypedData!
+}
+
+type CreateSetFollowModuleEIP712TypedData
+  @join__type(graph: ORMI)
+{
+  types: CreateSetFollowModuleEIP712TypedDataTypes!
+  domain: EIP712TypedDataDomain!
+  value: CreateSetFollowModuleEIP712TypedDataValue!
+}
+
+type CreateSetFollowModuleEIP712TypedDataTypes
+  @join__type(graph: ORMI)
+{
+  SetFollowModuleWithSig: [EIP712TypedDataField!]!
+}
+
+type CreateSetFollowModuleEIP712TypedDataValue
+  @join__type(graph: ORMI)
+{
+  nonce: Nonce!
+  deadline: UnixTimestamp!
+  profileId: ProfileId!
+  followModule: ContractAddress!
+  followModuleInitData: FollowModuleData!
+}
+
+input CreateSetFollowModuleRequest
+  @join__type(graph: ORMI)
+{
+  profileId: ProfileId!
+  followModule: FollowModuleParams!
+}
+
+type CreateSetFollowNFTUriBroadcastItemResult
+  @join__type(graph: ORMI)
+{
+  id: BroadcastId!
+  expiresAt: DateTime!
+  typedData: CreateSetFollowNFTUriEIP712TypedData!
+}
+
+type CreateSetFollowNFTUriEIP712TypedData
+  @join__type(graph: ORMI)
+{
+  types: CreateSetFollowNFTUriEIP712TypedDataTypes!
+  domain: EIP712TypedDataDomain!
+  value: CreateSetFollowNFTUriEIP712TypedDataValue!
+}
+
+type CreateSetFollowNFTUriEIP712TypedDataTypes
+  @join__type(graph: ORMI)
+{
+  SetFollowNFTURIWithSig: [EIP712TypedDataField!]!
+}
+
+type CreateSetFollowNFTUriEIP712TypedDataValue
+  @join__type(graph: ORMI)
+{
+  nonce: Nonce!
+  deadline: UnixTimestamp!
+  profileId: ProfileId!
+  followNFTURI: Url!
+}
+
+input CreateSetFollowNFTUriRequest
+  @join__type(graph: ORMI)
+{
+  profileId: ProfileId!
+  followNFTURI: Url
+}
+
+type CreateSetProfileImageUriBroadcastItemResult
+  @join__type(graph: ORMI)
+{
+  id: BroadcastId!
+  expiresAt: DateTime!
+  typedData: CreateSetProfileImageUriEIP712TypedData!
+}
+
+type CreateSetProfileImageUriEIP712TypedData
+  @join__type(graph: ORMI)
+{
+  types: CreateSetProfileImageUriEIP712TypedDataTypes!
+  domain: EIP712TypedDataDomain!
+  value: CreateSetProfileImageUriEIP712TypedDataValue!
+}
+
+type CreateSetProfileImageUriEIP712TypedDataTypes
+  @join__type(graph: ORMI)
+{
+  SetProfileImageURIWithSig: [EIP712TypedDataField!]!
+}
+
+type CreateSetProfileImageUriEIP712TypedDataValue
+  @join__type(graph: ORMI)
+{
+  nonce: Nonce!
+  deadline: UnixTimestamp!
+  profileId: ProfileId!
+  imageURI: Url!
+}
+
+type CreateSetProfileMetadataURIBroadcastItemResult
+  @join__type(graph: ORMI)
+{
+  id: BroadcastId!
+  expiresAt: DateTime!
+  typedData: CreateSetProfileMetadataURIEIP712TypedData!
+}
+
+type CreateSetProfileMetadataURIEIP712TypedData
+  @join__type(graph: ORMI)
+{
+  types: CreateSetProfileMetadataURIEIP712TypedDataTypes!
+  domain: EIP712TypedDataDomain!
+  value: CreateSetProfileMetadataURIEIP712TypedDataValue!
+}
+
+type CreateSetProfileMetadataURIEIP712TypedDataTypes
+  @join__type(graph: ORMI)
+{
+  SetProfileMetadataURIWithSig: [EIP712TypedDataField!]!
+}
+
+type CreateSetProfileMetadataURIEIP712TypedDataValue
+  @join__type(graph: ORMI)
+{
+  nonce: Nonce!
+  deadline: UnixTimestamp!
+  profileId: ProfileId!
+  metadata: Url!
+}
+
+type CreateToggleFollowBroadcastItemResult
+  @join__type(graph: ORMI)
+{
+  id: BroadcastId!
+  expiresAt: DateTime!
+  typedData: CreateToggleFollowEIP712TypedData!
+}
+
+type CreateToggleFollowEIP712TypedData
+  @join__type(graph: ORMI)
+{
+  types: CreateToggleFollowEIP712TypedDataTypes!
+  domain: EIP712TypedDataDomain!
+  value: CreateToggleFollowEIP712TypedDataValue!
+}
+
+type CreateToggleFollowEIP712TypedDataTypes
+  @join__type(graph: ORMI)
+{
+  ToggleFollowWithSig: [EIP712TypedDataField!]!
+}
+
+type CreateToggleFollowEIP712TypedDataValue
+  @join__type(graph: ORMI)
+{
+  nonce: Nonce!
+  deadline: UnixTimestamp!
+  profileIds: [ProfileId!]!
+  enables: [Boolean!]!
+}
+
+input CreateToggleFollowRequest
+  @join__type(graph: ORMI)
+{
+  profileIds: [ProfileId!]!
+  enables: [Boolean!]!
+}
+
+type CreateUnfollowBroadcastItemResult
+  @join__type(graph: ORMI)
+{
+  id: BroadcastId!
+  expiresAt: DateTime!
+  typedData: CreateBurnEIP712TypedData!
+}
+
+scalar Cursor
+  @join__type(graph: ORMI)
+
+scalar DateTime
+  @join__type(graph: ORMI)
+
+input DefaultProfileRequest
+  @join__type(graph: ORMI)
+{
+  ethereumAddress: EthereumAddress!
+}
+
+type Dispatcher
+  @join__type(graph: ORMI)
+{
+  address: EthereumAddress!
+  canUseRelay: Boolean!
+}
+
+input DoesFollow
+  @join__type(graph: ORMI)
+{
+  followerAddress: EthereumAddress!
+  profileId: ProfileId!
+}
+
+input DoesFollowRequest
+  @join__type(graph: ORMI)
+{
+  followInfos: [DoesFollow!]!
+}
+
+type DoesFollowResponse
+  @join__type(graph: ORMI)
+{
+  followerAddress: EthereumAddress!
+  profileId: ProfileId!
+  follows: Boolean!
+}
+
+type EIP712TypedDataDomain
+  @join__type(graph: ORMI)
+{
+  name: String!
+  chainId: ChainId!
+  version: String!
+  verifyingContract: ContractAddress!
+}
+
+type EIP712TypedDataField
+  @join__type(graph: ORMI)
+{
+  name: String!
+  type: String!
+}
+
+type EnabledModule
+  @join__type(graph: ORMI)
+{
+  moduleName: String!
+  contractAddress: ContractAddress!
+  inputParams: [ModuleInfo!]!
+  redeemParams: [ModuleInfo!]!
+  returnDataParms: [ModuleInfo!]!
+}
+
+type EnabledModules
+  @join__type(graph: ORMI)
+{
+  collectModules: [EnabledModule!]!
+  followModules: [EnabledModule!]!
+  referenceModules: [EnabledModule!]!
+}
+
+type Erc20
+  @join__type(graph: ORMI)
+{
+  name: String!
+  symbol: String!
+  decimals: Int!
+  address: ContractAddress!
+}
+
+type Erc20Amount
+  @join__type(graph: ORMI)
+{
+  asset: Erc20!
+  value: String!
+}
+
+scalar EthereumAddress
+  @join__type(graph: ORMI)
+
+type ExploreProfileResult
+  @join__type(graph: ORMI)
+{
+  items: [Profile!]!
+  pageInfo: PaginatedResultInfo!
+}
+
+input ExploreProfilesRequest
+  @join__type(graph: ORMI)
+{
+  limit: LimitScalar
+  cursor: Cursor
+  timestamp: TimestampScalar
+  sortCriteria: ProfileSortCriteria!
+}
+
+input ExplorePublicationRequest
+  @join__type(graph: ORMI)
+{
+  limit: LimitScalar
+  cursor: Cursor
+  timestamp: TimestampScalar
+  sortCriteria: PublicationSortCriteria!
+  sources: [Sources!] = []
+  publicationTypes: [PublicationTypes!]
+  noRandomize: Boolean
+  excludeProfileIds: [ProfileId!]
+}
+
+type ExplorePublicationResult
+  @join__type(graph: ORMI)
+{
+  items: [Publication!]!
+  pageInfo: PaginatedResultInfo!
+}
+
+input FeeCollectModuleParams
+  @join__type(graph: ORMI)
+{
+  amount: ModuleFeeAmountParams!
+  recipient: EthereumAddress!
+  referralFee: Float!
+  followerOnly: Boolean!
+}
+
+type FeeCollectModuleSettings
+  @join__type(graph: ORMI)
+{
+  type: CollectModules!
+  contractAddress: ContractAddress!
+  amount: ModuleFeeAmount!
+  recipient: EthereumAddress!
+  referralFee: Float!
+  followerOnly: Boolean!
+}
+
+input FeeFollowModuleParams
+  @join__type(graph: ORMI)
+{
+  amount: ModuleFeeAmountParams!
+  recipient: EthereumAddress!
+}
+
+input FeeFollowModuleRedeemParams
+  @join__type(graph: ORMI)
+{
+  amount: ModuleFeeAmountParams!
+}
+
+type FeeFollowModuleSettings
+  @join__type(graph: ORMI)
+{
+  type: FollowModules!
+  contractAddress: ContractAddress!
+  amount: ModuleFeeAmount!
+  recipient: EthereumAddress!
+}
+
+input Follow
+  @join__type(graph: ORMI)
+{
+  profile: ProfileId!
+  followModule: FollowModuleRedeemParams
+}
+
+type Follower
+  @join__type(graph: ORMI)
+{
+  wallet: Wallet!
+  totalAmountOfTimesFollowed: Int!
+}
+
+type FollowerNftOwnedTokenIds
+  @join__type(graph: ORMI)
+{
+  followerNftAddress: ContractAddress!
+  tokensIds: [String!]!
+}
+
+input FollowerNftOwnedTokenIdsRequest
+  @join__type(graph: ORMI)
+{
+  address: EthereumAddress!
+  profileId: ProfileId!
+}
+
+input FollowersRequest
+  @join__type(graph: ORMI)
+{
+  limit: LimitScalar
+  cursor: Cursor
+  profileId: ProfileId!
+}
+
+type Following
+  @join__type(graph: ORMI)
+{
+  profile: Profile!
+  totalAmountOfTimesFollowing: Int!
+}
+
+input FollowingRequest
+  @join__type(graph: ORMI)
+{
+  limit: LimitScalar
+  cursor: Cursor
+  address: EthereumAddress!
+}
+
+union FollowModule
+  @join__type(graph: ORMI)
+ = FeeFollowModuleSettings | ProfileFollowModuleSettings | RevertFollowModuleSettings
+
+scalar FollowModuleData
+  @join__type(graph: ORMI)
+
+input FollowModuleParams
+  @join__type(graph: ORMI)
+{
+  feeFollowModule: FeeFollowModuleParams
+  profileFollowModule: Boolean
+  revertFollowModule: Boolean
+  freeFollowModule: Boolean
+}
+
+input FollowModuleRedeemParams
+  @join__type(graph: ORMI)
+{
+  feeFollowModule: FeeFollowModuleRedeemParams
+  profileFollowModule: ProfileFollowModuleRedeemParams
+}
+
+enum FollowModules
+  @join__type(graph: ORMI)
+{
+  FeeFollowModule
+  RevertFollowModule
+  ProfileFollowModule
+}
+
+type FollowOnlyReferenceModuleSettings
+  @join__type(graph: ORMI)
+{
+  type: ReferenceModules!
+  contractAddress: ContractAddress!
+}
+
+input FollowRequest
+  @join__type(graph: ORMI)
+{
+  follow: [Follow!]!
+}
+
+input FraudReasonInputParams
+  @join__type(graph: ORMI)
+{
+  reason: PublicationReportingReason!
+  subreason: PublicationReportingFraudSubreason!
+}
+
+input FreeCollectModuleParams
+  @join__type(graph: ORMI)
+{
+  followerOnly: Boolean!
+}
+
+type FreeCollectModuleSettings
+  @join__type(graph: ORMI)
+{
+  type: CollectModules!
+  contractAddress: ContractAddress!
+  followerOnly: Boolean!
+}
+
+type GenerateModuleCurrencyApproval
+  @join__type(graph: ORMI)
+{
+  to: ContractAddress!
+  from: EthereumAddress!
+  data: BlockchainData!
+}
+
+input GenerateModuleCurrencyApprovalDataRequest
+  @join__type(graph: ORMI)
+{
+  currency: ContractAddress!
+  value: String!
+  collectModule: CollectModules
+  followModule: FollowModules
+  referenceModule: ReferenceModules
+}
+
+type GlobalProtocolStats
+  @join__type(graph: ORMI)
+{
+  totalProfiles: Int!
+  totalBurntProfiles: Int!
+  totalPosts: Int!
+  totalMirrors: Int!
+  totalComments: Int!
+  totalCollects: Int!
+  totalFollows: Int!
+  totalRevenue: [Erc20Amount!]!
+}
+
+input GlobalProtocolStatsRequest
+  @join__type(graph: ORMI)
+{
+  fromTimestamp: UnixTimestamp
+  toTimestamp: UnixTimestamp
+  sources: [Sources!]
+}
+
+scalar Handle
+  @join__type(graph: ORMI)
+
+scalar HandleClaimIdScalar
+  @join__type(graph: ORMI)
+
+type HasCollectedItem
+  @join__type(graph: ORMI)
+{
+  collected: Boolean!
+  collectedTimes: Int!
+  publicationId: InternalPublicationId!
+}
+
+input HasCollectedPublicationRequest
+  @join__type(graph: ORMI)
+{
+  walletAddress: EthereumAddress!
+  publicationIds: [InternalPublicationId!]!
+}
+
+input HasCollectedRequest
+  @join__type(graph: ORMI)
+{
+  collectRequests: [HasCollectedPublicationRequest!]!
+}
+
+type HasCollectedResult
+  @join__type(graph: ORMI)
+{
+  walletAddress: EthereumAddress!
+  results: [HasCollectedItem!]!
+}
+
+type HasMirroredItem
+  @join__type(graph: ORMI)
+{
+  mirrored: Boolean!
+  publicationId: InternalPublicationId!
+}
+
+input HasMirroredProfileRequest
+  @join__type(graph: ORMI)
+{
+  profileId: ProfileId!
+  publicationIds: [InternalPublicationId!]!
+}
+
+input HasMirroredRequest
+  @join__type(graph: ORMI)
+{
+  profilesRequest: [HasMirroredProfileRequest!]!
+}
+
+type HasMirroredResult
+  @join__type(graph: ORMI)
+{
+  profileId: ProfileId!
+  results: [HasMirroredItem!]!
+}
+
+input HasTxHashBeenIndexedRequest
+  @join__type(graph: ORMI)
+{
+  txHash: TxHash
+  txId: TxId
+}
+
+input HidePublicationRequest
+  @join__type(graph: ORMI)
+{
+  publicationId: InternalPublicationId!
+}
+
+input IllegalReasonInputParams
+  @join__type(graph: ORMI)
+{
+  reason: PublicationReportingReason!
+  subreason: PublicationReportingIllegalSubreason!
+}
+
+scalar InternalPublicationId
+  @join__type(graph: ORMI)
+
+scalar join__FieldSet
+
+enum join__Graph {
+  ORMI @join__graph(name: "ormi", url: "https://api.lens.dev/")
+}
+
+scalar Jwt
+  @join__type(graph: ORMI)
+
+input LimitedFeeCollectModuleParams
+  @join__type(graph: ORMI)
+{
+  collectLimit: String!
+  amount: ModuleFeeAmountParams!
+  recipient: EthereumAddress!
+  referralFee: Float!
+  followerOnly: Boolean!
+}
+
+type LimitedFeeCollectModuleSettings
+  @join__type(graph: ORMI)
+{
+  type: CollectModules!
+  contractAddress: ContractAddress!
+  collectLimit: String!
+  amount: ModuleFeeAmount!
+  recipient: EthereumAddress!
+  referralFee: Float!
+  followerOnly: Boolean!
+}
+
+input LimitedTimedFeeCollectModuleParams
+  @join__type(graph: ORMI)
+{
+  collectLimit: String!
+  amount: ModuleFeeAmountParams!
+  recipient: EthereumAddress!
+  referralFee: Float!
+  followerOnly: Boolean!
+}
+
+type LimitedTimedFeeCollectModuleSettings
+  @join__type(graph: ORMI)
+{
+  type: CollectModules!
+  contractAddress: ContractAddress!
+  collectLimit: String!
+  amount: ModuleFeeAmount!
+  recipient: EthereumAddress!
+  referralFee: Float!
+  followerOnly: Boolean!
+  endTimestamp: DateTime!
+}
+
+scalar LimitScalar
+  @join__type(graph: ORMI)
+
+scalar link__Import
+
+enum link__Purpose {
+  """
+  `SECURITY` features provide metadata necessary to securely resolve fields.
+  """
+  SECURITY
+
+  """
+  `EXECUTION` features provide metadata necessary for operation execution.
+  """
+  EXECUTION
+}
+
+type Log
+  @join__type(graph: ORMI)
+{
+  blockNumber: Int!
+  blockHash: String!
+  transactionIndex: Int!
+  removed: Boolean!
+  address: ContractAddress!
+  data: String!
+  topics: [String!]!
+  transactionHash: TxHash!
+  logIndex: Int!
+}
+
+union MainPostReference
+  @join__type(graph: ORMI)
+ = Post | Mirror
+
+scalar Markdown
+  @join__type(graph: ORMI)
+
+type Media
+  @join__type(graph: ORMI)
+{
+  url: Url!
+  width: Int
+  height: Int
+  size: Int
+  mimeType: MimeType
+}
+
+type MediaSet
+  @join__type(graph: ORMI)
+{
+  original: Media!
+  small: Media
+  medium: Media
+}
+
+union MentionPublication
+  @join__type(graph: ORMI)
+ = Post | Comment
+
+type MetadataAttributeOutput
+  @join__type(graph: ORMI)
+{
+  displayType: MetadataDisplayType
+  traitType: String
+  value: String
+}
+
+enum MetadataDisplayType
+  @join__type(graph: ORMI)
+{
+  number
+  string
+  date
+}
+
+type MetadataOutput
+  @join__type(graph: ORMI)
+{
+  name: String
+  description: Markdown
+  content: Markdown
+  image: Url
+  cover: MediaSet
+  media: [MediaSet!]!
+  attributes: [MetadataAttributeOutput!]!
+}
+
+scalar MimeType
+  @join__type(graph: ORMI)
+
+type Mirror
+  @join__type(graph: ORMI)
+{
+  id: InternalPublicationId!
+  profile: Profile!
+  stats: PublicationStats!
+  metadata: MetadataOutput!
+  onChainContentURI: String!
+  createdAt: DateTime!
+  collectModule: CollectModule!
+  referenceModule: ReferenceModule
+  appId: Sources
+  hidden: Boolean!
+  collectNftAddress: ContractAddress
+  mirrorOf: MirrorablePublication!
+  reaction(request: ReactionFieldResolverRequest): ReactionTypes
+  hasCollectedByMe: Boolean!
+}
+
+union MirrorablePublication
+  @join__type(graph: ORMI)
+ = Post | Comment
+
+type ModuleFeeAmount
+  @join__type(graph: ORMI)
+{
+  asset: Erc20!
+  value: String!
+}
+
+input ModuleFeeAmountParams
+  @join__type(graph: ORMI)
+{
+  currency: ContractAddress!
+  value: String!
+}
+
+type ModuleInfo
+  @join__type(graph: ORMI)
+{
+  name: String!
+  type: String!
+}
+
+type Mutation
+  @join__type(graph: ORMI)
+{
+  authenticate(request: SignedAuthChallenge!): AuthenticationResult!
+  refresh(request: RefreshRequest!): AuthenticationResult!
+  broadcast(request: BroadcastRequest!): RelayResult!
+  createSetDispatcherTypedData(options: TypedDataOptions, request: SetDispatcherRequest!): CreateSetDispatcherBroadcastItemResult!
+  createFollowTypedData(options: TypedDataOptions, request: FollowRequest!): CreateFollowBroadcastItemResult!
+  createUnfollowTypedData(options: TypedDataOptions, request: UnfollowRequest!): CreateUnfollowBroadcastItemResult!
+  createSetFollowModuleTypedData(options: TypedDataOptions, request: CreateSetFollowModuleRequest!): CreateSetFollowModuleBroadcastItemResult!
+  createSetFollowNFTUriTypedData(options: TypedDataOptions, request: CreateSetFollowNFTUriRequest!): CreateSetFollowNFTUriBroadcastItemResult!
+  createToggleFollowTypedData(options: TypedDataOptions, request: CreateToggleFollowRequest!): CreateToggleFollowBroadcastItemResult!
+  createCollectTypedData(options: TypedDataOptions, request: CreateCollectRequest!): CreateCollectBroadcastItemResult!
+  createSetDefaultProfileTypedData(options: TypedDataOptions, request: CreateSetDefaultProfileRequest!): SetDefaultProfileBroadcastItemResult!
+  createSetProfileImageURITypedData(options: TypedDataOptions, request: UpdateProfileImageRequest!): CreateSetProfileImageUriBroadcastItemResult!
+  createBurnProfileTypedData(options: TypedDataOptions, request: BurnProfileRequest!): CreateBurnProfileBroadcastItemResult!
+  createPostTypedData(options: TypedDataOptions, request: CreatePublicPostRequest!): CreatePostBroadcastItemResult!
+  createCommentTypedData(options: TypedDataOptions, request: CreatePublicCommentRequest!): CreateCommentBroadcastItemResult!
+  createMirrorTypedData(options: TypedDataOptions, request: CreateMirrorRequest!): CreateMirrorBroadcastItemResult!
+  hidePublication(request: HidePublicationRequest!): Void
+  claim(request: ClaimHandleRequest!): RelayResult!
+  createProfile(request: CreateProfileRequest!): RelayResult!
+  createSetProfileMetadataTypedData(options: TypedDataOptions, request: CreatePublicSetProfileMetadataURIRequest!): CreateSetProfileMetadataURIBroadcastItemResult!
+  addReaction(request: ReactionRequest!): Void
+  removeReaction(request: ReactionRequest!): Void
+  reportPublication(request: ReportPublicationRequest!): Void
+  ach(request: AchRequest!): Void
+}
+
+type NewCollectNotification
+  @join__type(graph: ORMI)
+{
+  wallet: Wallet!
+  collectedPublication: Publication!
+  createdAt: DateTime!
+}
+
+type NewCommentNotification
+  @join__type(graph: ORMI)
+{
+  profile: Profile!
+  comment: Comment!
+  createdAt: DateTime!
+}
+
+type NewFollowerNotification
+  @join__type(graph: ORMI)
+{
+  wallet: Wallet!
+  isFollowedByMe: Boolean!
+  createdAt: DateTime!
+}
+
+type NewMentionNotification
+  @join__type(graph: ORMI)
+{
+  mentionPublication: MentionPublication!
+  createdAt: DateTime!
+}
+
+type NewMirrorNotification
+  @join__type(graph: ORMI)
+{
+  profile: Profile!
+  publication: MirrorablePublication!
+  createdAt: DateTime!
+}
+
+type NFT
+  @join__type(graph: ORMI)
+{
+  contractName: String!
+  contractAddress: ContractAddress!
+  symbol: String!
+  tokenId: String!
+  owners: [Owner!]!
+  name: String!
+  description: String!
+  contentURI: String!
+  originalContent: NFTContent!
+  chainId: ChainId!
+  collectionName: String!
+  ercType: String!
+}
+
+type NFTContent
+  @join__type(graph: ORMI)
+{
+  uri: String!
+  metaType: String!
+  animatedUrl: String
+}
+
+input NFTData
+  @join__type(graph: ORMI)
+{
+  id: NftOwnershipId!
+  signature: Signature!
+}
+
+type NftImage
+  @join__type(graph: ORMI)
+{
+  contractAddress: ContractAddress!
+  tokenId: String!
+  uri: Url!
+  chainId: Int!
+  verified: Boolean!
+}
+
+input NftOwnershipChallenge
+  @join__type(graph: ORMI)
+{
+  contractAddress: ContractAddress!
+  tokenId: String!
+  chainId: ChainId!
+}
+
+input NftOwnershipChallengeRequest
+  @join__type(graph: ORMI)
+{
+  ethereumAddress: EthereumAddress!
+  nfts: [NftOwnershipChallenge!]!
+}
+
+type NftOwnershipChallengeResult
+  @join__type(graph: ORMI)
+{
+  id: NftOwnershipId!
+  text: String!
+  timeout: TimestampScalar!
+}
+
+scalar NftOwnershipId
+  @join__type(graph: ORMI)
+
+input NFTsRequest
+  @join__type(graph: ORMI)
+{
+  limit: LimitScalar
+  cursor: Cursor
+  ownerAddress: EthereumAddress!
+  contractAddress: ContractAddress
+  chainIds: [ChainId!]!
+}
+
+type NFTsResult
+  @join__type(graph: ORMI)
+{
+  items: [NFT!]!
+  pageInfo: PaginatedResultInfo!
+}
+
+scalar Nonce
+  @join__type(graph: ORMI)
+
+union Notification
+  @join__type(graph: ORMI)
+ = NewFollowerNotification | NewCollectNotification | NewCommentNotification | NewMirrorNotification | NewMentionNotification
+
+input NotificationRequest
+  @join__type(graph: ORMI)
+{
+  limit: LimitScalar
+  cursor: Cursor
+  profileId: ProfileId!
+  sources: [Sources!] = []
+}
+
+type Owner
+  @join__type(graph: ORMI)
+{
+  amount: Float!
+  address: EthereumAddress!
+}
+
+type PaginatedFollowersResult
+  @join__type(graph: ORMI)
+{
+  items: [Follower!]!
+  pageInfo: PaginatedResultInfo!
+}
+
+type PaginatedFollowingResult
+  @join__type(graph: ORMI)
+{
+  items: [Following!]!
+  pageInfo: PaginatedResultInfo!
+}
+
+type PaginatedNotificationResult
+  @join__type(graph: ORMI)
+{
+  items: [Notification!]!
+  pageInfo: PaginatedResultInfo!
+}
+
+type PaginatedProfilePublicationsForSaleResult
+  @join__type(graph: ORMI)
+{
+  items: [PublicationForSale!]!
+  pageInfo: PaginatedResultInfo!
+}
+
+type PaginatedProfileResult
+  @join__type(graph: ORMI)
+{
+  items: [Profile!]!
+  pageInfo: PaginatedResultInfo!
+}
+
+type PaginatedPublicationResult
+  @join__type(graph: ORMI)
+{
+  items: [Publication!]!
+  pageInfo: PaginatedResultInfo!
+}
+
+type PaginatedResultInfo
+  @join__type(graph: ORMI)
+{
+  prev: Cursor
+  next: Cursor
+  totalCount: Int!
+}
+
+type PaginatedTimelineResult
+  @join__type(graph: ORMI)
+{
+  items: [Publication!]!
+  pageInfo: PaginatedResultInfo!
+}
+
+type PaginatedWhoCollectedResult
+  @join__type(graph: ORMI)
+{
+  items: [Wallet!]!
+  pageInfo: PaginatedResultInfo!
+}
+
+input PendingApprovalFollowsRequest
+  @join__type(graph: ORMI)
+{
+  limit: LimitScalar
+  cursor: Cursor
+}
+
+type PendingApproveFollowsResult
+  @join__type(graph: ORMI)
+{
+  items: [Profile!]!
+  pageInfo: PaginatedResultInfo!
+}
+
+type Post
+  @join__type(graph: ORMI)
+{
+  id: InternalPublicationId!
+  profile: Profile!
+  stats: PublicationStats!
+  metadata: MetadataOutput!
+  onChainContentURI: String!
+  createdAt: DateTime!
+  collectModule: CollectModule!
+  referenceModule: ReferenceModule
+  appId: Sources
+  hidden: Boolean!
+  collectNftAddress: ContractAddress
+  collectedBy: Wallet
+  reaction(request: ReactionFieldResolverRequest): ReactionTypes
+  hasCollectedByMe: Boolean!
+  mirrors(by: ProfileId): [InternalPublicationId!]!
+}
+
+type Profile
+  @join__type(graph: ORMI)
+{
+  id: ProfileId!
+  name: String
+  bio: String
+  followNftAddress: ContractAddress
+  metadata: Url
+  handle: Handle!
+  picture: ProfileMedia
+  coverPicture: ProfileMedia
+  ownedBy: EthereumAddress!
+  dispatcher: Dispatcher
+  stats: ProfileStats!
+  followModule: FollowModule
+  isDefault: Boolean!
+  attributes: [Attribute!]
+  isFollowedByMe: Boolean!
+  isFollowing(who: ProfileId): Boolean!
+}
+
+input ProfileFollowModuleBeenRedeemedRequest
+  @join__type(graph: ORMI)
+{
+  followProfileId: ProfileId!
+  redeemingProfileId: ProfileId!
+}
+
+input ProfileFollowModuleRedeemParams
+  @join__type(graph: ORMI)
+{
+  profileId: ProfileId!
+}
+
+type ProfileFollowModuleSettings
+  @join__type(graph: ORMI)
+{
+  type: FollowModules!
+  contractAddress: ContractAddress!
+}
+
+scalar ProfileId
+  @join__type(graph: ORMI)
+
+union ProfileMedia
+  @join__type(graph: ORMI)
+ = NftImage | MediaSet
+
+input ProfilePublicationsForSaleRequest
+  @join__type(graph: ORMI)
+{
+  limit: LimitScalar
+  cursor: Cursor
+  profileId: ProfileId!
+  sources: [Sources!] = []
+}
+
+input ProfileQueryRequest
+  @join__type(graph: ORMI)
+{
+  limit: LimitScalar
+  cursor: Cursor
+  profileIds: [ProfileId!]
+  ownedBy: [EthereumAddress!]
+  handles: [Handle!]
+  whoMirroredPublicationId: InternalPublicationId
+}
+
+input ProfileRevenueQueryRequest
+  @join__type(graph: ORMI)
+{
+  limit: LimitScalar
+  cursor: Cursor
+  profileId: ProfileId!
+  sources: [Sources!] = []
+  types: [ProfileRevenueTypes!] = [COMMENT, MIRROR, POST]
+}
+
+type ProfileRevenueResult
+  @join__type(graph: ORMI)
+{
+  items: [PublicationRevenue!]!
+  pageInfo: PaginatedResultInfo!
+}
+
+enum ProfileRevenueTypes
+  @join__type(graph: ORMI)
+{
+  POST
+  COMMENT
+  MIRROR
+}
+
+type ProfileSearchResult
+  @join__type(graph: ORMI)
+{
+  items: [Profile!]!
+  pageInfo: PaginatedResultInfo!
+  type: SearchRequestTypes!
+}
+
+enum ProfileSortCriteria
+  @join__type(graph: ORMI)
+{
+  CREATED_ON
+  MOST_FOLLOWERS
+  LATEST_CREATED
+  MOST_POSTS
+  MOST_COMMENTS
+  MOST_MIRRORS
+  MOST_PUBLICATION
+  MOST_COLLECTS
+}
+
+type ProfileStats
+  @join__type(graph: ORMI)
+{
+  totalFollowers: Int!
+  totalFollowing: Int!
+  totalPosts: Int!
+  totalComments: Int!
+  totalMirrors: Int!
+  totalPublications: Int!
+  totalCollects: Int!
+}
+
+union Publication
+  @join__type(graph: ORMI)
+ = Post | Comment | Mirror
+
+union PublicationForSale
+  @join__type(graph: ORMI)
+ = Post | Comment
+
+scalar PublicationId
+  @join__type(graph: ORMI)
+
+type PublicationMetadataStatus
+  @join__type(graph: ORMI)
+{
+  status: PublicationMetadataStatusType!
+  reason: String
+}
+
+enum PublicationMetadataStatusType
+  @join__type(graph: ORMI)
+{
+  PENDING
+  METADATA_VALIDATION_FAILED
+  SUCCESS
+}
+
+input PublicationQueryRequest
+  @join__type(graph: ORMI)
+{
+  publicationId: InternalPublicationId
+  txHash: TxHash
+}
+
+enum PublicationReportingFraudSubreason
+  @join__type(graph: ORMI)
+{
+  SCAM
+  IMPERSONATION
+}
+
+enum PublicationReportingIllegalSubreason
+  @join__type(graph: ORMI)
+{
+  ANIMAL_ABUSE
+  HUMAN_ABUSE
+}
+
+enum PublicationReportingReason
+  @join__type(graph: ORMI)
+{
+  SENSITIVE
+  ILLEGAL
+  FRAUD
+}
+
+enum PublicationReportingSensitiveSubreason
+  @join__type(graph: ORMI)
+{
+  NSFW
+  OFFENSIVE
+}
+
+type PublicationRevenue
+  @join__type(graph: ORMI)
+{
+  publication: Publication!
+  earnings: Erc20Amount!
+  protocolFee: Float!
+}
+
+input PublicationRevenueQueryRequest
+  @join__type(graph: ORMI)
+{
+  publicationId: InternalPublicationId!
+}
+
+type PublicationSearchResult
+  @join__type(graph: ORMI)
+{
+  items: [PublicationSearchResultItem!]!
+  pageInfo: PaginatedResultInfo!
+  type: SearchRequestTypes!
+}
+
+union PublicationSearchResultItem
+  @join__type(graph: ORMI)
+ = Post | Comment
+
+enum PublicationSortCriteria
+  @join__type(graph: ORMI)
+{
+  TOP_COMMENTED
+  TOP_COLLECTED
+  TOP_MIRRORED
+  LATEST
+}
+
+input PublicationsQueryRequest
+  @join__type(graph: ORMI)
+{
+  limit: LimitScalar
+  cursor: Cursor
+  profileId: ProfileId
+  publicationTypes: [PublicationTypes!]
+  commentsOf: InternalPublicationId
+  sources: [Sources!] = []
+  collectedBy: EthereumAddress
+  publicationIds: [InternalPublicationId!]
+}
+
+type PublicationStats
+  @join__type(graph: ORMI)
+{
+  totalAmountOfMirrors: Int!
+  totalAmountOfCollects: Int!
+  totalAmountOfComments: Int!
+  totalUpvotes: Int!
+  totalDownvotes: Int!
+}
+
+enum PublicationTypes
+  @join__type(graph: ORMI)
+{
+  POST
+  COMMENT
+  MIRROR
+}
+
+scalar PublicationUrl
+  @join__type(graph: ORMI)
+
+type Query
+  @join__type(graph: ORMI)
+{
+  challenge(request: ChallengeRequest!): AuthChallengeResult!
+  verify(request: VerifyRequest!): Boolean!
+  explorePublications(request: ExplorePublicationRequest!): ExplorePublicationResult!
+  exploreProfiles(request: ExploreProfilesRequest!): ExploreProfileResult!
+  pendingApprovalFollows(request: PendingApprovalFollowsRequest!): PendingApproveFollowsResult!
+  doesFollow(request: DoesFollowRequest!): [DoesFollowResponse!]!
+  following(request: FollowingRequest!): PaginatedFollowingResult!
+  followers(request: FollowersRequest!): PaginatedFollowersResult!
+  followerNftOwnedTokenIds(request: FollowerNftOwnedTokenIdsRequest!): FollowerNftOwnedTokenIds!
+  ping: String!
+  hasTxHashBeenIndexed(request: HasTxHashBeenIndexedRequest!): TransactionResult!
+  enabledModuleCurrencies: [Erc20!]!
+  approvedModuleAllowanceAmount(request: ApprovedModuleAllowanceAmountRequest!): [ApprovedAllowanceAmount!]!
+  generateModuleCurrencyApprovalData(request: GenerateModuleCurrencyApprovalDataRequest!): GenerateModuleCurrencyApproval!
+  profileFollowModuleBeenRedeemed(request: ProfileFollowModuleBeenRedeemedRequest!): Boolean!
+  enabledModules: EnabledModules!
+  nfts(request: NFTsRequest!): NFTsResult!
+  nftOwnershipChallenge(request: NftOwnershipChallengeRequest!): NftOwnershipChallengeResult!
+  notifications(request: NotificationRequest!): PaginatedNotificationResult!
+  profiles(request: ProfileQueryRequest!): PaginatedProfileResult!
+  profile(request: SingleProfileQueryRequest!): Profile
+  recommendedProfiles: [Profile!]!
+  defaultProfile(request: DefaultProfileRequest!): Profile
+  globalProtocolStats(request: GlobalProtocolStatsRequest): GlobalProtocolStats!
+  publications(request: PublicationsQueryRequest!): PaginatedPublicationResult!
+  publication(request: PublicationQueryRequest!): Publication
+  hasMirrored(request: HasMirroredRequest!): [HasMirroredResult!]! @deprecated(reason: "you should use the `mirrors` field resolver passing in the profile id the user is active on, this lives on the publication, this will be removed from on 1st of July 2022")
+  hasCollected(request: HasCollectedRequest!): [HasCollectedResult!]! @deprecated(reason: "you should use the `hasCollectedByMe` field resolver on the publication, this will be removed from on 1st of July 2022")
+  whoCollectedPublication(request: WhoCollectedPublicationRequest!): PaginatedWhoCollectedResult!
+  profilePublicationsForSale(request: ProfilePublicationsForSaleRequest!): PaginatedProfilePublicationsForSaleResult!
+  search(request: SearchQueryRequest!): SearchResult!
+  timeline(request: TimelineRequest!): PaginatedTimelineResult!
+  userSigNonces: UserSigNonces!
+  claimableHandles: ClaimableHandles!
+  profileRevenue(request: ProfileRevenueQueryRequest!): ProfileRevenueResult!
+  publicationRevenue(request: PublicationRevenueQueryRequest!): PublicationRevenue
+}
+
+input ReactionFieldResolverRequest
+  @join__type(graph: ORMI)
+{
+  profileId: ProfileId!
+}
+
+input ReactionRequest
+  @join__type(graph: ORMI)
+{
+  profileId: ProfileId!
+  reaction: ReactionTypes!
+  publicationId: InternalPublicationId!
+}
+
+enum ReactionTypes
+  @join__type(graph: ORMI)
+{
+  UPVOTE
+  DOWNVOTE
+}
+
+union ReferenceModule
+  @join__type(graph: ORMI)
+ = FollowOnlyReferenceModuleSettings
+
+scalar ReferenceModuleData
+  @join__type(graph: ORMI)
+
+input ReferenceModuleParams
+  @join__type(graph: ORMI)
+{
+  followerOnlyReferenceModule: Boolean
+}
+
+enum ReferenceModules
+  @join__type(graph: ORMI)
+{
+  FollowerOnlyReferenceModule
+}
+
+input RefreshRequest
+  @join__type(graph: ORMI)
+{
+  refreshToken: Jwt!
+}
+
+type RelayerResult
+  @join__type(graph: ORMI)
+{
+  txHash: TxHash!
+  txId: TxId!
+}
+
+type RelayError
+  @join__type(graph: ORMI)
+{
+  reason: RelayErrorReasons!
+}
+
+enum RelayErrorReasons
+  @join__type(graph: ORMI)
+{
+  REJECTED
+  HANDLE_TAKEN
+  EXPIRED
+  WRONG_WALLET_SIGNED
+  NOT_ALLOWED
+}
+
+union RelayResult
+  @join__type(graph: ORMI)
+ = RelayerResult | RelayError
+
+input ReportingReasonInputParams
+  @join__type(graph: ORMI)
+{
+  sensitiveReason: SensitiveReasonInputParams
+  illegalReason: IllegalReasonInputParams
+  fraudReason: FraudReasonInputParams
+}
+
+input ReportPublicationRequest
+  @join__type(graph: ORMI)
+{
+  publicationId: InternalPublicationId!
+  reason: ReportingReasonInputParams!
+  additionalComments: String
+}
+
+type ReservedClaimableHandle
+  @join__type(graph: ORMI)
+{
+  id: HandleClaimIdScalar!
+  handle: Handle!
+  source: String!
+  expiry: DateTime!
+}
+
+type RevertCollectModuleSettings
+  @join__type(graph: ORMI)
+{
+  type: CollectModules!
+  contractAddress: ContractAddress!
+}
+
+type RevertFollowModuleSettings
+  @join__type(graph: ORMI)
+{
+  type: FollowModules!
+  contractAddress: ContractAddress!
+}
+
+scalar Search
+  @join__type(graph: ORMI)
+
+input SearchQueryRequest
+  @join__type(graph: ORMI)
+{
+  limit: LimitScalar
+  cursor: Cursor
+  query: Search!
+  type: SearchRequestTypes!
+  sources: [Sources!] = []
+}
+
+enum SearchRequestTypes
+  @join__type(graph: ORMI)
+{
+  PUBLICATION
+  PROFILE
+}
+
+union SearchResult
+  @join__type(graph: ORMI)
+ = PublicationSearchResult | ProfileSearchResult
+
+input SensitiveReasonInputParams
+  @join__type(graph: ORMI)
+{
+  reason: PublicationReportingReason!
+  subreason: PublicationReportingSensitiveSubreason!
+}
+
+type SetDefaultProfileBroadcastItemResult
+  @join__type(graph: ORMI)
+{
+  id: BroadcastId!
+  expiresAt: DateTime!
+  typedData: SetDefaultProfileEIP712TypedData!
+}
+
+type SetDefaultProfileEIP712TypedData
+  @join__type(graph: ORMI)
+{
+  types: SetDefaultProfileEIP712TypedDataTypes!
+  domain: EIP712TypedDataDomain!
+  value: SetDefaultProfileEIP712TypedDataValue!
+}
+
+type SetDefaultProfileEIP712TypedDataTypes
+  @join__type(graph: ORMI)
+{
+  SetDefaultProfileWithSig: [EIP712TypedDataField!]!
+}
+
+type SetDefaultProfileEIP712TypedDataValue
+  @join__type(graph: ORMI)
+{
+  nonce: Nonce!
+  deadline: UnixTimestamp!
+  wallet: EthereumAddress!
+  profileId: ProfileId!
+}
+
+input SetDispatcherRequest
+  @join__type(graph: ORMI)
+{
+  profileId: ProfileId!
+  dispatcher: EthereumAddress
+  enable: Boolean
+}
+
+scalar Signature
+  @join__type(graph: ORMI)
+
+input SignedAuthChallenge
+  @join__type(graph: ORMI)
+{
+  address: EthereumAddress!
+  signature: Signature!
+}
+
+input SingleProfileQueryRequest
+  @join__type(graph: ORMI)
+{
+  profileId: ProfileId
+  handle: Handle
+}
+
+scalar Sources
+  @join__type(graph: ORMI)
+
+input TimedFeeCollectModuleParams
+  @join__type(graph: ORMI)
+{
+  amount: ModuleFeeAmountParams!
+  recipient: EthereumAddress!
+  referralFee: Float!
+  followerOnly: Boolean!
+}
+
+type TimedFeeCollectModuleSettings
+  @join__type(graph: ORMI)
+{
+  type: CollectModules!
+  contractAddress: ContractAddress!
+  amount: ModuleFeeAmount!
+  recipient: EthereumAddress!
+  referralFee: Float!
+  followerOnly: Boolean!
+  endTimestamp: DateTime!
+}
+
+input TimelineRequest
+  @join__type(graph: ORMI)
+{
+  limit: LimitScalar
+  cursor: Cursor
+  profileId: ProfileId!
+  sources: [Sources!] = []
+  timelineTypes: [TimelineType!] = [COLLECT_COMMENT, COLLECT_POST, COMMENT, POST, MIRROR]
+}
+
+enum TimelineType
+  @join__type(graph: ORMI)
+{
+  POST
+  COMMENT
+  MIRROR
+  COLLECT_POST
+  COLLECT_COMMENT
+}
+
+scalar TimestampScalar
+  @join__type(graph: ORMI)
+
+type TransactionError
+  @join__type(graph: ORMI)
+{
+  reason: TransactionErrorReasons!
+  txReceipt: TransactionReceipt
+}
+
+enum TransactionErrorReasons
+  @join__type(graph: ORMI)
+{
+  REVERTED
+}
+
+type TransactionIndexedResult
+  @join__type(graph: ORMI)
+{
+  indexed: Boolean!
+  txHash: TxHash!
+  txReceipt: TransactionReceipt
+  metadataStatus: PublicationMetadataStatus
+}
+
+type TransactionReceipt
+  @join__type(graph: ORMI)
+{
+  to: EthereumAddress
+  from: EthereumAddress!
+  contractAddress: ContractAddress
+  transactionIndex: Int!
+  root: String
+  gasUsed: String!
+  logsBloom: String!
+  blockHash: String!
+  transactionHash: TxHash!
+  logs: [Log!]!
+  blockNumber: Int!
+  confirmations: Int!
+  cumulativeGasUsed: String!
+  effectiveGasPrice: String!
+  byzantium: Boolean!
+  type: Int!
+  status: Int
+}
+
+union TransactionResult
+  @join__type(graph: ORMI)
+ = TransactionIndexedResult | TransactionError
+
+scalar TxHash
+  @join__type(graph: ORMI)
+
+scalar TxId
+  @join__type(graph: ORMI)
+
+input TypedDataOptions
+  @join__type(graph: ORMI)
+{
+  overrideSigNonce: Nonce!
+}
+
+input UnfollowRequest
+  @join__type(graph: ORMI)
+{
+  profile: ProfileId!
+}
+
+scalar UnixTimestamp
+  @join__type(graph: ORMI)
+
+input UpdateProfileImageRequest
+  @join__type(graph: ORMI)
+{
+  profileId: ProfileId!
+  url: Url
+  nftData: NFTData
+}
+
+scalar Url
+  @join__type(graph: ORMI)
+
+type UserSigNonces
+  @join__type(graph: ORMI)
+{
+  lensHubOnChainSigNonce: Nonce!
+  peripheryOnChainSigNonce: Nonce!
+}
+
+input VerifyRequest
+  @join__type(graph: ORMI)
+{
+  accessToken: Jwt!
+}
+
+scalar Void
+  @join__type(graph: ORMI)
+
+type Wallet
+  @join__type(graph: ORMI)
+{
+  address: EthereumAddress!
+  defaultProfile: Profile
+}
+
+input WhoCollectedPublicationRequest
+  @join__type(graph: ORMI)
+{
+  limit: LimitScalar
+  cursor: Cursor
+  publicationId: InternalPublicationId!
+}
