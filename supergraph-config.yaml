@@ -1,15 +1,14 @@
 federation_version: 2
 subgraphs:
   ormi:
-    routing_url: https://ormi-subgraph.herokuapp.com/
+    routing_url: https://ormi-graphql.herokuapp.com/
     schema:
       file: './src/sdls/ormi-subgraph.graphql'
-  ormi:
+  lens:
     routing_url: 'https://api.lens.dev/'
     schema:
       file: './src/sdls/lens.graphql'
-  # TODO: obtain correcdt cyberconnect SDL file and enable below
-  # cyberconnect:
-  #   routing_url: 'https://api.cybertino.io/connect/'
-  #   schema:
-  #     file: './src/sdls/cyberconnect.graphql'
+  cyberconnect:
+    routing_url: 'https://api.cybertino.io/connect/'
+    schema:
+      file: './src/sdls/cyberconnect.graphql'
