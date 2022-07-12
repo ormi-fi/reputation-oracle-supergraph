@@ -198,7 +198,7 @@ enum BiConnState {
   BLACKLIST
 }
 
-type BiConnectAcceptedNotification implements Notification {
+type BiConnectAcceptedNotification implements CyberConnectNotification {
   id: ID!
 
   toAddress: String!
@@ -234,7 +234,7 @@ input BiConnectInput {
   network: Network = ETH
 }
 
-type BiConnectReceivedNotification implements Notification {
+type BiConnectReceivedNotification implements CyberConnectNotification {
   id: ID!
 
   toAddress: String!
@@ -616,7 +616,7 @@ enum Network {
   SOLANA
 }
 
-type NewConnectionNotification implements Notification {
+type NewConnectionNotification implements CyberConnectNotification {
   id: ID!
 
   toAddress: String!
@@ -640,7 +640,7 @@ interface Node {
   id: ID!
 }
 
-interface Notification {
+interface CyberConnectNotification {
   id: ID!
 
   toAddress: String!
@@ -659,7 +659,7 @@ interface Notification {
 type NotificationPage {
   pageInfo: PageInfo!
 
-  list: [Notification!]!
+  list: [CyberConnectNotification!]!
 }
 
 enum NotificationType {
