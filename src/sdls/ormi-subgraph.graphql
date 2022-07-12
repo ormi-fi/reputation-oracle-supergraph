@@ -3,7 +3,7 @@ The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://
 """
 scalar JSON
 
-type Proof {
+type VerifiedCredentialProof {
   jws: String
   type: String
   created: String
@@ -25,7 +25,7 @@ type VerifiedCredential {
   issuer: String!
   issuanceDate: String!
   expirationDate: String!
-  proof: Proof!
+  proof: VerifiedCredentialProof!
 }
 
 type Stamp {

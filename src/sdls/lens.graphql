@@ -1089,11 +1089,11 @@ input NftOwnershipChallenge {
 
 # The paginated notification result
 type PaginatedNotificationResult {
-  items: [Notification!]!
+  items: [LensNotification!]!
   pageInfo: PaginatedResultInfo!
 }
 
-union Notification =
+union LensNotification =
     NewFollowerNotification
   | NewCollectNotification
   | NewCommentNotification
